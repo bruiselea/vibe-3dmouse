@@ -7,8 +7,11 @@
 手元にある3Dconnexion SpaceMouseを、Codex Micro風の入力デバイスとして使うための
 Windows向けブリッジです。
 
-[GOROmanさんのvibewatch](https://github.com/GOROman/vibewatch)を参考に、
-「眠っているSpaceMouseで何かできないか？」と考えて作りました。
+このプロジェクトは、まず「手元にあるSpaceMouseでCodexを操作できないか？」という
+アイデアから始まり、SpaceMouseの入力判定と操作割り当てを試作しました。その後、
+GOROmanさんが公開してくださったCodex Micro互換ソフトウェア
+[vibewatch](https://github.com/GOROman/vibewatch)を参考に、Codexと接続するHID互換部分を
+実装しています。
 SpaceMouseの押す・引く・傾ける・ひねる・左右ボタンを、Codexの音声入力、送信、
 承認／却下、Agent切り替えなどへ割り当てられます。
 
@@ -131,7 +134,7 @@ Codex未検出時には必ず復帰させます。
 
 ## 謝辞
 
-- [GOROman/vibewatch](https://github.com/GOROman/vibewatch) — HIDプロトコルと実装の参考
+- [GOROman/vibewatch](https://github.com/GOROman/vibewatch) — 後から公開されたCodex Micro互換HID実装の参考
 - [OpenAI × Work Louder: Codex Micro](https://openai.com/ja-JP/supply/co-lab/work-louder/) — プロジェクトの着想
 - Microsoft Virtual HID miniport sample — 仮想HID実装の基礎
 

@@ -2,7 +2,7 @@
 
 [![Windows 11](https://img.shields.io/badge/Windows-11%20x64-0078D4?logo=windows11)](https://www.microsoft.com/windows/windows-11)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Release](https://img.shields.io/badge/release-0.1.0--beta.2-blue)](https://github.com/bruiselea/vibe-spacemouce/releases/tag/v0.1.0-beta.2)
+[![Release](https://img.shields.io/badge/release-0.1.0--beta.3-blue)](https://github.com/bruiselea/vibe-spacemouce/releases/tag/v0.1.0-beta.3)
 
 手元にある3Dconnexion SpaceMouseを、Codex Micro風の入力デバイスとして使うための
 Windows向けブリッジです。
@@ -16,7 +16,7 @@ SpaceMouseの押す・引く・傾ける・ひねる・左右ボタンを、Code
 承認／却下、Agent切り替えなどへ割り当てられます。
 
 > [!WARNING]
-> `0.1.0-beta.2`はテスト署名ドライバを使う検証版です。SetupはPCのRoot／TrustedPublisherへ
+> `0.1.0-beta.3`はテスト署名ドライバを使う検証版です。SetupはPCのRoot／TrustedPublisherへ
 > テスト証明書を登録します。内容を理解したうえで、信頼できる配布元から入手したSetupだけを
 > 使用してください。一般公開用の正式署名版ではありません。
 
@@ -47,8 +47,8 @@ SpaceMouseの押す・引く・傾ける・ひねる・左右ボタンを、Code
 
 ## インストール
 
-1. [Releases](https://github.com/bruiselea/vibe-spacemouce/releases/tag/v0.1.0-beta.2)から
-   `VibeSpaceMouseBridgeForCodex-0.1.0-beta.2-x64-setup.exe`をダウンロードします。
+1. [Releases](https://github.com/bruiselea/vibe-spacemouce/releases/tag/v0.1.0-beta.3)から
+   `VibeSpaceMouseBridgeForCodex-0.1.0-beta.3-x64-setup.exe`をダウンロードします。
 2. 必要に応じて同梱のSHA-256ファイルと照合します。
 3. Setupを実行し、テスト証明書と仮想HIDドライバの導入に同意します。
 4. Codexを起動するとSpaceMouseへ自動接続します。

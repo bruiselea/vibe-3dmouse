@@ -51,7 +51,7 @@ try {
         & $iscc (Join-Path $workspace 'packaging\SpaceMouseCodexBridge.iss')
         if ($LASTEXITCODE -ne 0) { throw 'Inno Setup compilation failed.' }
 
-        $installer = Join-Path $dist 'installer\VibeSpaceMouseBridgeForCodex-0.1.0-beta.2-x64-setup.exe'
+        $installer = Join-Path $dist 'installer\VibeSpaceMouseBridgeForCodex-0.1.0-beta.3-x64-setup.exe'
         $hash = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
         "$hash  $([IO.Path]::GetFileName($installer))" | Set-Content `
             -LiteralPath ($installer + '.sha256') -Encoding ascii

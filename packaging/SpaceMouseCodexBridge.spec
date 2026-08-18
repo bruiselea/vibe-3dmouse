@@ -10,7 +10,7 @@ a = Analysis(
     binaries=[],
     datas=[
         (str(workspace / "config" / "mapping.json"), "config"),
-        (str(workspace / "spacemouse_input" / "assets" / "vibe-6dof.png"), "spacemouse_input/assets"),
+        (str(workspace / "spacemouse_input" / "assets" / "spacemouse-controller.png"), "spacemouse_input/assets"),
         (str(icon), "spacemouse_input/assets"),
     ],
     hiddenimports=["PIL._tkinter_finder"],

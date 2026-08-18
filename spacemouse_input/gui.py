@@ -19,7 +19,7 @@ from .runtime import run_bridge
 
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "mapping.json"
-DEVICE_ART_PATH = Path(__file__).resolve().parent / "assets" / "vibe-6dof.png"
+DEVICE_ART_PATH = Path(__file__).resolve().parent / "assets" / "spacemouse-controller.png"
 LEFT_CALLOUTS = (
     ("tz-", "↑  Z− 引き上げ"),
     ("rz-", "↺  左ひねり"),

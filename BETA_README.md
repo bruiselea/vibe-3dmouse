@@ -1,4 +1,4 @@
-# Vibe SpaceMouse Bridge for Codex 0.1.0-beta.2
+# Vibe SpaceMouse Bridge for Codex 0.1.0-beta.3
 
 Windows 11 x64と3Dconnexion SpaceMouse Compact向けの身内検証版です。
 Codexを起動するとSpaceMouse入力をCodex Micro互換HIDへ送り、Codex終了後に公式3DxWareへ戻します。

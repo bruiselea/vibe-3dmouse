@@ -91,7 +91,7 @@ try {
     }
 
     [ordered]@{
-        product_version = '0.1.0-beta.2'
+        product_version = '0.1.0-beta.3'
         instance_id = $instanceId
         published_name = $publishedName
         certificate_thumbprint = $rootCertificate.Thumbprint

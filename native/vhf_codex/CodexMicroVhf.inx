@@ -1,0 +1,58 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderString%
+DriverVer=08/11/2026,1.0.0.0
+CatalogFile=CodexMicroVhf.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir=13
+
+[SourceDisksNames]
+1=%DiskDescription%,,,
+
+[SourceDisksFiles]
+CodexMicroVhf.sys=1
+
+[Manufacturer]
+%ManufacturerString%=Standard,NT$ARCH$.10.0...16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%DeviceDescription%=CodexMicroVhf_Install,root\CodexMicroVhf
+
+[CodexMicroVhf_Install.NT]
+CopyFiles=DriverCopy
+
+[CodexMicroVhf_Install.NT.HW]
+AddReg=CodexMicroVhf_AddReg
+
+[CodexMicroVhf_AddReg]
+HKR,,LowerFilters,0x00010000,"vhf"
+
+[CodexMicroVhf_Install.NT.Services]
+AddService=CodexMicroVhf,0x00000002,CodexMicroVhf_Service
+
+[CodexMicroVhf_Service]
+DisplayName=%ServiceDescription%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%13%\CodexMicroVhf.sys
+
+[CodexMicroVhf_Install.NT.Wdf]
+KmdfService=CodexMicroVhf,CodexMicroVhf_Wdf
+
+[CodexMicroVhf_Wdf]
+KmdfLibraryVersion=$KMDFVERSION$
+
+[DriverCopy]
+CodexMicroVhf.sys
+
+[Strings]
+ProviderString="SpaceMouse Codex"
+ManufacturerString="SpaceMouse Codex"
+DiskDescription="Codex Micro VHF Driver Installation Disk"
+DeviceDescription="Codex Micro VHF Source"
+ServiceDescription="Codex Micro SpaceMouse VHF Source Driver"

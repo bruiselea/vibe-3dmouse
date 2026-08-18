@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "press_threshold": 180,
+  "release_threshold": 90,
+  "dominance_ratio": 1.25,
+  "activation_ms": 40.0,
+  "assignments": {
+    "tx+": "analog_right",
+    "tx-": "analog_left",
+    "ty+": "analog_down",
+    "ty-": "new_chat",
+    "tz+": "mic_ptt",
+    "tz-": "send",
+    "rx+": "agent_next",
+    "rx-": "agent_previous",
+    "ry+": "encoder_cw",
+    "ry-": "encoder_ccw",
+    "rz+": "fast",
+    "rz-": "analog_up",
+    "button_left": "ng",
+    "button_right": "ok"
+  }
+}

@@ -1,0 +1,22 @@
+SpaceMouse Codex Bridge includes the following third-party runtime components.
+
+hidapi / Python hidapi bindings
+https://github.com/trezor/cython-hidapi
+Distributed under its applicable open-source license terms.
+
+Pillow
+https://python-pillow.org/
+Copyright contributors. HPND License.
+
+pystray
+https://github.com/moses-palmer/pystray
+Copyright Moses Palmer. LGPLv3.
+
+PyInstaller bootloader
+https://pyinstaller.org/
+GPL 2.0 with the special exception that permits distributing bundled applications.
+
+Python
+https://www.python.org/
+Python Software Foundation License.
+

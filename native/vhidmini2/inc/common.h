@@ -1,0 +1,46 @@
+/*
+ * Codex Micro compatible HID report definitions.
+ * The surrounding UMDF minidriver is derived from Microsoft's vhidmini2
+ * sample. The report layout mirrors GOROman's vibewatch firmware.
+ */
+
+#ifndef CODEX_MICRO_HID_COMMON_H
+#define CODEX_MICRO_HID_COMMON_H
+
+#define CODEX_MICRO_VENDOR_ID           0x303A
+#define CODEX_MICRO_PRODUCT_ID          0x8360
+#define CODEX_MICRO_VERSION             0x0001
+
+#define CONTROL_COLLECTION_REPORT_ID    0x06
+#define CONTROL_FEATURE_REPORT_ID       0x06
+#define INJECTION_COLLECTION_REPORT_ID  0x07
+#define CODEX_MICRO_REPORT_DATA_SIZE    63
+#define CODEX_MICRO_REPORT_SIZE         (CODEX_MICRO_REPORT_DATA_SIZE + 1)
+#define CODEX_MICRO_QUEUE_CAPACITY      32
+
+#define MAXIMUM_STRING_LENGTH           (126 * sizeof(WCHAR))
+#define VHIDMINI_MANUFACTURER_STRING    L"OpenAI Community"
+#define VHIDMINI_PRODUCT_STRING         L"Codex Micro SpaceMouse Bridge"
+#define VHIDMINI_SERIAL_NUMBER_STRING   L"SPACEMOUSE-CODEX-0001"
+#define VHIDMINI_DEVICE_STRING          L"Codex Micro SpaceMouse Bridge"
+#define VHIDMINI_DEVICE_STRING_INDEX    5
+
+#include <pshpack1.h>
+
+typedef struct _HIDMINI_INPUT_REPORT {
+    UCHAR ReportId;
+    UCHAR Data[CODEX_MICRO_REPORT_DATA_SIZE];
+} HIDMINI_INPUT_REPORT, *PHIDMINI_INPUT_REPORT;
+
+typedef HIDMINI_INPUT_REPORT HIDMINI_OUTPUT_REPORT;
+typedef PHIDMINI_INPUT_REPORT PHIDMINI_OUTPUT_REPORT;
+typedef HIDMINI_INPUT_REPORT HIDMINI_CONTROL_INFO;
+typedef PHIDMINI_INPUT_REPORT PHIDMINI_CONTROL_INFO;
+
+#include <poppack.h>
+
+#define FEATURE_REPORT_SIZE_CB ((USHORT)CODEX_MICRO_REPORT_DATA_SIZE)
+#define INPUT_REPORT_SIZE_CB   ((USHORT)CODEX_MICRO_REPORT_DATA_SIZE)
+#define OUTPUT_REPORT_SIZE_CB  ((USHORT)CODEX_MICRO_REPORT_DATA_SIZE)
+
+#endif

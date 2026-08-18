@@ -1,0 +1,93 @@
+;/*++
+;
+;Copyright (c) Microsoft Corporation All rights Reserved
+;
+;Module Name:
+;
+;    CodexMicroHid.inf
+;
+;Abstract:
+;    INF file for installing HID minidriver (UMDF 2 version)
+;
+; Installation Notes:
+;    Install with: devcon install CodexMicroHid.inf root\CodexMicroHid
+;
+; Important:
+;    This INF depends on MsHidUmdf.inf, which was introduced in build 22000
+;
+;--*/
+[Version]
+Signature="$WINDOWS NT$"
+Class=HIDClass
+ClassGuid={745a17a0-74d3-11d0-b6fe-00a0c90f57da}
+Provider=%ProviderString%
+DriverVer=10/01/2002,6.0.5058.0
+CatalogFile=CodexMicroHid.cat
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1=%Disk_Description%,,,
+
+[SourceDisksFiles]
+CodexMicroHid.dll=1
+
+; ================= Device section =====================
+
+[Manufacturer]
+%ManufacturerString%=OpenAICommunity, NT$ARCH$.10.0...22000
+
+[OpenAICommunity.NT$ARCH$.10.0...22000]
+%DeviceDesc%=VhidminiUm, root\CodexMicroHid
+
+[VhidminiUm.NT]
+CopyFiles=UMDriverCopy
+Include=MsHidUmdf.inf
+Needs=MsHidUmdf.NT
+Include=WUDFRD.inf
+Needs=WUDFRD_LowerFilter.NT
+
+[VhidminiUm.NT.hw]
+Include=MsHidUmdf.inf
+Needs=MsHidUmdf.NT.hw
+Include=WUDFRD.inf
+Needs=WUDFRD_LowerFilter.NT.hw
+
+[VhidminiUm.NT.Services]
+Include=MsHidUmdf.inf
+Needs=MsHidUmdf.NT.Services
+Include=WUDFRD.inf
+Needs=WUDFRD_LowerFilter.NT.Services
+
+[VhidminiUm.NT.Filters]
+Include=WUDFRD.inf
+Needs=WUDFRD_LowerFilter.NT.Filters
+
+[VhidminiUm.NT.Wdf]
+UmdfService="CodexMicroHid", VhidminiUm_Install
+UmdfServiceOrder=CodexMicroHid
+UmdfKernelModeClientPolicy=AllowKernelModeClients
+UmdfFileObjectPolicy=AllowNullAndUnknownFileObjects
+UmdfMethodNeitherAction=Copy
+UmdfFsContextUsePolicy=CanUseFsContext2
+
+[VhidminiUm_Install]
+UmdfLibraryVersion=$UMDFVERSION$
+ServiceBinary="%13%\CodexMicroHid.dll"
+
+; ================= copy files =====================
+
+[UMDriverCopy]
+CodexMicroHid.dll
+
+;---------------------------------------------------------------;
+
+[Strings]
+ProviderString     ="SpaceMouse Codex"
+ManufacturerString ="SpaceMouse Codex"
+ClassName          ="Codex Micro Compatible Device"
+Disk_Description   ="Codex Micro SpaceMouse Bridge Installation Disk"
+DeviceDesc         ="Codex Micro SpaceMouse Bridge"
+WudfRdDisplayName  ="Windows Driver Foundation - User-mode Driver Framework Reflector"

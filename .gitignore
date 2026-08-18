@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.vs/
+build/
+dist/
+*.obj
+*.log
+*.user
+*.suo
+installed-driver.json
+native/**/x64/
+native/**/ARM64/

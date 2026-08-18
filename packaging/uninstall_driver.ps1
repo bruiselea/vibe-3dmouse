@@ -5,10 +5,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $installDirectory = [IO.Path]::GetFullPath($InstallDirectory)
-$app = Join-Path $installDirectory 'SpaceMouseCodexBridge.exe'
+$app = Join-Path $installDirectory 'VibeSpaceMouseBridgeForCodex.exe'
 $driverDirectory = Join-Path $installDirectory 'driver'
 $metadataPath = Join-Path $driverDirectory 'installed-driver.json'
-$defaultInstanceId = 'SWD\VID_303A&PID_8360\SPACEMOUSE_CODEX'
 $logDirectory = Join-Path $env:ProgramData 'SpaceMouseCodex'
 $logPath = Join-Path $logDirectory 'uninstall.log'
 $controlFile = Join-Path $logDirectory 'control.bin'
@@ -20,7 +19,7 @@ try {
         & $app --shutdown
         $deadline = [DateTime]::UtcNow.AddSeconds(25)
         do {
-            $running = Get-Process -Name 'SpaceMouseCodexBridge' -ErrorAction SilentlyContinue |
+            $running = Get-Process -Name 'VibeSpaceMouseBridgeForCodex' -ErrorAction SilentlyContinue |
                 Where-Object { $_.Path -eq $app }
             if (-not $running) { break }
             Start-Sleep -Milliseconds 250
@@ -32,10 +31,28 @@ try {
     if (Test-Path -LiteralPath $metadataPath -PathType Leaf) {
         $metadata = Get-Content -Raw -LiteralPath $metadataPath | ConvertFrom-Json
     }
-    $instanceId = if ($metadata.instance_id) { [string]$metadata.instance_id } else { $defaultInstanceId }
-    $device = Get-PnpDevice -InstanceId $instanceId -ErrorAction SilentlyContinue
-    if ($device) {
-        & pnputil.exe /remove-device $instanceId /force | Out-Null
+    # Remove only HID children owned by our software-device parent. Matching the
+    # parent avoids touching a physical Codex Micro with the same VID/PID.
+    $hidChildren = Get-PnpDevice -ErrorAction SilentlyContinue | Where-Object {
+        $_.InstanceId -like 'HID\VID_303A&PID_8360*' -and
+        (Get-PnpDeviceProperty -InstanceId $_.InstanceId `
+            -KeyName 'DEVPKEY_Device_Parent' -ErrorAction SilentlyContinue).Data -like
+            'SWD\VID_303A&PID_8360\SPACEMOUSE_CODEX*'
+    }
+    foreach ($device in $hidChildren) {
+        & pnputil.exe /remove-device ([string]$device.InstanceId) /force | Out-Null
+        if ($LASTEXITCODE -notin @(0, 3010)) { Write-Warning "HID child removal failed: $LASTEXITCODE" }
+    }
+
+    $devices = Get-PnpDevice -ErrorAction SilentlyContinue | Where-Object {
+        (($_.InstanceId -like 'SWD\VID_303A&PID_8360\SPACEMOUSE_CODEX*' -or
+            $_.InstanceId -like 'SWD\*\VID_303A&PID_8360&SPACEMOUSE_CODEX*') -and
+            $_.FriendlyName -eq 'Codex Micro SpaceMouse Bridge') -or
+        ($_.InstanceId -like 'ROOT\HIDCLASS\*' -and
+            $_.FriendlyName -eq 'Codex Micro SpaceMouse Bridge')
+    }
+    foreach ($device in $devices) {
+        & pnputil.exe /remove-device ([string]$device.InstanceId) /force | Out-Null
         if ($LASTEXITCODE -notin @(0, 3010)) { Write-Warning "Device removal failed: $LASTEXITCODE" }
     }
 

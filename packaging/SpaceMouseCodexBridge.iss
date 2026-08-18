@@ -1,18 +1,18 @@
-#define MyAppName "SpaceMouse Codex Bridge"
-#define MyAppVersion "0.1.0-beta.1"
-#define MyAppExeName "SpaceMouseCodexBridge.exe"
+#define MyAppName "Vibe SpaceMouse Bridge for Codex"
+#define MyAppVersion "0.1.0-beta.2"
+#define MyAppExeName "VibeSpaceMouseBridgeForCodex.exe"
 
 [Setup]
 AppId={{65F015A2-15CB-4AC0-BE98-44CF9296F3B8}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-AppPublisher=SpaceMouse Codex Community
-DefaultDirName={autopf}\SpaceMouse Codex Bridge
-DefaultGroupName=SpaceMouse Codex Bridge
+AppPublisher=Vibe SpaceMouse Community
+DefaultDirName={autopf}\Vibe SpaceMouse Bridge for Codex
+DefaultGroupName=Vibe SpaceMouse Bridge for Codex
 DisableProgramGroupPage=yes
 OutputDir=..\dist\installer
-OutputBaseFilename=SpaceMouseCodexBridge-{#MyAppVersion}-x64-setup
-SetupIconFile=..\spacemouse_input\assets\spacemouse-controller.ico
+OutputBaseFilename=VibeSpaceMouseBridgeForCodex-{#MyAppVersion}-x64-setup
+SetupIconFile=..\spacemouse_input\assets\vibe-6dof.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2/max
 SolidCompression=yes
@@ -32,7 +32,7 @@ Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: "autostart"; Description: "Windowsログイン時にタスクトレイへ自動起動"; GroupDescription: "起動設定:"; Flags: checkedonce
 
 [Files]
-Source: "..\dist\SpaceMouseCodexBridge\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\dist\VibeSpaceMouseBridgeForCodex\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\native\vhidmini2\driver\umdf2\x64\Release\VhidminiUm\*"; DestDir: "{app}\driver"; Flags: ignoreversion
 Source: "..\native\vhidmini2\driver\umdf2\x64\Release\CodexMicroHid.cer"; DestDir: "{app}\driver"; Flags: ignoreversion
 Source: "..\native\swdevice_creator\x64\Release\swdevice_creator.exe"; DestDir: "{app}\driver"; Flags: ignoreversion
@@ -40,17 +40,23 @@ Source: "install_driver.ps1"; DestDir: "{app}\driver"; Flags: ignoreversion
 Source: "uninstall_driver.ps1"; DestDir: "{app}\driver"; Flags: ignoreversion
 Source: "..\BETA_README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\THIRD_PARTY_NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\THIRD_PARTY_LICENSES\*"; DestDir: "{app}\THIRD_PARTY_LICENSES"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\SpaceMouse Codex Bridge"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\Vibe SpaceMouse Bridge for Codex"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\詳細設定"; Filename: "{app}\{#MyAppExeName}"; Parameters: "--advanced"
 Name: "{group}\アンインストール"; Filename: "{uninstallexe}"
 
 [Registry]
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "SpaceMouseCodexBridge"; ValueData: """{app}\{#MyAppExeName}"" --background"; Tasks: autostart; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "VibeSpaceMouseBridgeForCodex"; ValueData: """{app}\{#MyAppExeName}"" --background"; Tasks: autostart; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: none; ValueName: "SpaceMouseCodexBridge"; Flags: deletevalue
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "SpaceMouse Codex Bridgeを起動"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "Vibe SpaceMouse Bridge for Codexを起動"; Flags: nowait postinstall skipifsilent
+
+[InstallDelete]
+Type: files; Name: "{app}\SpaceMouseCodexBridge.exe"
 
 [UninstallRun]
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\driver\uninstall_driver.ps1"" -InstallDirectory ""{app}"""; Flags: runhidden waituntilterminated; RunOnceId: "RemoveSpaceMouseCodexDriver"

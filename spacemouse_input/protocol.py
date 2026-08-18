@@ -1,4 +1,9 @@
-"""Build and send the vendor HID reports understood by Codex Micro."""
+"""Build and send the vendor HID reports understood by Codex Micro.
+
+Compatibility framing was implemented with reference to GOROman/vibewatch,
+Copyright (c) 2026 GOROman, MIT License. The complete license is distributed in
+THIRD_PARTY_LICENSES/GOROman-vibewatch-MIT.txt.
+"""
 
 from __future__ import annotations
 

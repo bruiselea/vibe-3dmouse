@@ -29,9 +29,21 @@ CreatedCallback(
 int wmain()
 {
     static const WCHAR hardwareIds[] = L"root\\CodexMicroHid\0\0";
+    FILETIME now{};
+    WCHAR softwareInstanceId[96]{};
+    GetSystemTimeAsFileTime(&now);
+    swprintf_s(
+        softwareInstanceId,
+        L"SPACEMOUSE_CODEX_%08lX%08lX_%08lX",
+        now.dwHighDateTime,
+        now.dwLowDateTime,
+        GetCurrentProcessId());
     SW_DEVICE_CREATE_INFO info{};
     info.cbSize = sizeof(info);
-    info.pszInstanceId = L"SPACEMOUSE_CODEX";
+    // A removed SWD ID can remain tombstoned until reboot. A unique instance
+    // makes uninstall -> immediate reinstall reliable while the stable prefix
+    // still lets the uninstaller identify only devices owned by this app.
+    info.pszInstanceId = softwareInstanceId;
     info.pszzHardwareIds = hardwareIds;
     info.CapabilityFlags = SWDeviceCapabilitiesSilentInstall;
     info.pszDeviceDescription = L"Codex Micro SpaceMouse Bridge";

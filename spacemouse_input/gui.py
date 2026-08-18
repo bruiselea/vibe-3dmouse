@@ -19,7 +19,7 @@ from .runtime import run_bridge
 
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "mapping.json"
-DEVICE_ART_PATH = Path(__file__).resolve().parent / "assets" / "spacemouse-controller.png"
+DEVICE_ART_PATH = Path(__file__).resolve().parent / "assets" / "vibe-6dof.png"
 LEFT_CALLOUTS = (
     ("tz-", "↑  Z− 引き上げ"),
     ("rz-", "↺  左ひねり"),
@@ -227,7 +227,7 @@ class MappingApp:
     def __init__(self, root: tk.Tk, config_path: Path = DEFAULT_CONFIG_PATH) -> None:
         self.root = root
         self.config_path = config_path
-        self.root.title("SpaceMouse Codex Mapper")
+        self.root.title("Vibe SpaceMouse Mapper for Codex")
         self.root.geometry("1280x900")
         self.root.minsize(1120, 760)
 
@@ -631,7 +631,7 @@ class MappingApp:
             return
         if self.bridge_thread is not None and self.bridge_thread.is_alive():
             self.closing = True
-            self.root.title("SpaceMouse Codex Mapper — 終了処理中")
+            self.root.title("Vibe SpaceMouse Mapper for Codex — 終了処理中")
             self.stop_bridge()
             return
         self.root.destroy()

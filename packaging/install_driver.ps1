@@ -11,7 +11,7 @@ $creator = Join-Path $driverDirectory 'swdevice_creator.exe'
 $metadataPath = Join-Path $driverDirectory 'installed-driver.json'
 $controlDirectory = Join-Path $env:ProgramData 'SpaceMouseCodex'
 $controlFile = Join-Path $controlDirectory 'control.bin'
-$instanceId = 'SWD\VID_303A&PID_8360\SPACEMOUSE_CODEX'
+$instanceId = $null
 $logDirectory = Join-Path $env:ProgramData 'SpaceMouseCodex'
 $logPath = Join-Path $logDirectory 'install.log'
 
@@ -41,10 +41,15 @@ try {
     & icacls.exe $controlDirectory /grant '*S-1-5-32-545:(OI)(CI)M' /T /C | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Failed to grant control-channel access: $LASTEXITCODE" }
 
-    $presentDevice = Get-PnpDevice -InstanceId $instanceId -ErrorAction SilentlyContinue
+    $presentDevice = Get-PnpDevice -ErrorAction SilentlyContinue | Where-Object {
+        ($_.InstanceId -like 'SWD\VID_303A&PID_8360\SPACEMOUSE_CODEX*' -or
+            $_.InstanceId -like 'SWD\*\VID_303A&PID_8360&SPACEMOUSE_CODEX*') -and
+        $_.FriendlyName -eq 'Codex Micro SpaceMouse Bridge'
+    } | Select-Object -First 1
+    if ($presentDevice) { $instanceId = [string]$presentDevice.InstanceId }
     $isPresent = $false
     if ($presentDevice) {
-        $property = Get-PnpDeviceProperty -InstanceId $instanceId `
+        $property = Get-PnpDeviceProperty -InstanceId $presentDevice.InstanceId `
             -KeyName 'DEVPKEY_Device_IsPresent' -ErrorAction SilentlyContinue
         $isPresent = $property.Data -eq $true
     }
@@ -59,8 +64,13 @@ try {
     if ($driverExit -notin @(0, 3010)) { throw "PnPUtil driver install failed: $driverExit" }
 
     if (-not $isPresent) {
-        & $creator
+        $creatorOutput = & $creator
+        $creatorOutput | Write-Host
         if ($LASTEXITCODE -ne 0) { throw "Software device creation failed: $LASTEXITCODE" }
+        $reportedId = @($creatorOutput) | Where-Object { $_ -match '^SWD\\' } |
+            Select-Object -Last 1
+        if (-not $reportedId) { throw 'Software device creator did not report an instance ID.' }
+        $instanceId = [string]$reportedId
     }
 
     $device = Get-PnpDevice -InstanceId $instanceId -ErrorAction SilentlyContinue
@@ -81,7 +91,7 @@ try {
     }
 
     [ordered]@{
-        product_version = '0.1.0-beta.1'
+        product_version = '0.1.0-beta.2'
         instance_id = $instanceId
         published_name = $publishedName
         certificate_thumbprint = $rootCertificate.Thumbprint
@@ -92,4 +102,3 @@ try {
 } finally {
     try { Stop-Transcript | Out-Null } catch {}
 }
-

@@ -1,4 +1,4 @@
-SpaceMouse Codex Bridge 0.1.0-beta.1 は身内検証用ベータです。
+Vibe SpaceMouse Bridge for Codex 0.1.0-beta.2 は身内検証用ベータです。
 
 このセットアップはCodex Micro互換の仮想HIDドライバを導入します。
 ドライバは一般公開用のMicrosoft正式署名ではなく、ベータ用証明書で署名されています。
@@ -7,4 +7,3 @@ SpaceMouse Codex Bridge 0.1.0-beta.1 は身内検証用ベータです。
 
 内容を理解し、信頼できる相手から受け取ったSetup.exeである場合だけ続行してください。
 アンインストーラは、このセットアップが導入したドライバと証明書を記録に基づいて削除します。
-

@@ -1,7 +1,7 @@
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(0, 1, 0, 1),
-    prodvers=(0, 1, 0, 1),
+    filevers=(0, 1, 0, 2),
+    prodvers=(0, 1, 0, 2),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -13,15 +13,14 @@ VSVersionInfo(
     StringFileInfo([
       StringTable('041104B0', [
         StringStruct('CompanyName', 'SpaceMouse Codex Community'),
-        StringStruct('FileDescription', 'SpaceMouse Codex Bridge'),
-        StringStruct('FileVersion', '0.1.0-beta.1'),
-        StringStruct('InternalName', 'SpaceMouseCodexBridge'),
-        StringStruct('OriginalFilename', 'SpaceMouseCodexBridge.exe'),
-        StringStruct('ProductName', 'SpaceMouse Codex Bridge'),
-        StringStruct('ProductVersion', '0.1.0-beta.1')
+        StringStruct('FileDescription', 'Vibe SpaceMouse Bridge for Codex'),
+        StringStruct('FileVersion', '0.1.0-beta.2'),
+        StringStruct('InternalName', 'VibeSpaceMouseBridgeForCodex'),
+        StringStruct('OriginalFilename', 'VibeSpaceMouseBridgeForCodex.exe'),
+        StringStruct('ProductName', 'Vibe SpaceMouse Bridge for Codex'),
+        StringStruct('ProductVersion', '0.1.0-beta.2')
       ])
     ]),
     VarFileInfo([VarStruct('Translation', [0x0411, 1200])])
   ]
 )
-

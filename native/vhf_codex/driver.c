@@ -3,6 +3,11 @@
 #include <vhf.h>
 #include <ntstrsafe.h>
 
+/*
+ * Codex Micro-compatible HID identifiers and framing were implemented with
+ * reference to GOROman/vibewatch (Copyright (c) 2026 GOROman, MIT License).
+ * See THIRD_PARTY_LICENSES/GOROman-vibewatch-MIT.txt in the source tree.
+ */
 #define CODEX_VID 0x303A
 #define CODEX_PID 0x8360
 #define CODEX_VERSION 0x0100

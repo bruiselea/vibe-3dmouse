@@ -1,22 +1,42 @@
-SpaceMouse Codex Bridge includes the following third-party runtime components.
+Vibe SpaceMouse Bridge for Codex includes or adapts the following third-party
+software. Complete license texts are installed in THIRD_PARTY_LICENSES.
 
-hidapi / Python hidapi bindings
+GOROman/vibewatch
+https://github.com/GOROman/vibewatch
+Copyright (c) 2026 GOROman. MIT License.
+The Codex Micro-compatible HID framing was implemented with reference to this
+project. See THIRD_PARTY_LICENSES/GOROman-vibewatch-MIT.txt.
+
+Microsoft Windows Driver Samples (vhidmini2)
+https://github.com/microsoft/Windows-driver-samples
+Copyright (c) Microsoft Corporation. Microsoft Public License (MS-PL).
+See THIRD_PARTY_LICENSES/Microsoft-Windows-Driver-Samples-MS-PL.txt.
+
+hidapi and cython-hidapi / Python hidapi bindings
+https://github.com/libusb/hidapi
 https://github.com/trezor/cython-hidapi
-Distributed under its applicable open-source license terms.
+BSD-style terms selected for the binary distribution. See the three hidapi
+license files in THIRD_PARTY_LICENSES.
 
 Pillow
 https://python-pillow.org/
-Copyright contributors. HPND License.
-
-pystray
-https://github.com/moses-palmer/pystray
-Copyright Moses Palmer. LGPLv3.
+Copyright Pillow contributors. MIT-CMU license expression and incorporated
+component notices. See THIRD_PARTY_LICENSES/Pillow.txt.
 
 PyInstaller bootloader
 https://pyinstaller.org/
-GPL 2.0 with the special exception that permits distributing bundled applications.
+GPL 2.0 with the special exception permitting distribution of bundled
+applications. See THIRD_PARTY_LICENSES/PyInstaller.txt.
 
-Python
+Python 3.12
 https://www.python.org/
-Python Software Foundation License.
+Python Software Foundation License. See THIRD_PARTY_LICENSES/Python-3.12.txt.
 
+Tcl/Tk 8.6
+https://www.tcl-lang.org/
+BSD-style license. See THIRD_PARTY_LICENSES/Tcl-Tk-8.6.txt.
+
+SpaceMouse and 3Dconnexion are trademarks or registered trademarks of
+3Dconnexion. Codex and OpenAI are trademarks or registered trademarks of
+OpenAI. This independent community project is not affiliated with, endorsed by,
+or sponsored by 3Dconnexion or OpenAI. No third-party logo is included.

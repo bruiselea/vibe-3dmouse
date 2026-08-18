@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 workspace = Path.cwd()
-icon = workspace / "spacemouse_input" / "assets" / "spacemouse-controller.ico"
+icon = workspace / "spacemouse_input" / "assets" / "vibe-6dof.ico"
 
 a = Analysis(
     [str(workspace / "release_main.py")],
@@ -10,10 +10,10 @@ a = Analysis(
     binaries=[],
     datas=[
         (str(workspace / "config" / "mapping.json"), "config"),
-        (str(workspace / "spacemouse_input" / "assets" / "spacemouse-controller.png"), "spacemouse_input/assets"),
+        (str(workspace / "spacemouse_input" / "assets" / "vibe-6dof.png"), "spacemouse_input/assets"),
         (str(icon), "spacemouse_input/assets"),
     ],
-    hiddenimports=["pystray._win32", "PIL._tkinter_finder"],
+    hiddenimports=["PIL._tkinter_finder"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -28,7 +28,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="SpaceMouseCodexBridge",
+    name="VibeSpaceMouseBridgeForCodex",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -48,6 +48,5 @@ coll = COLLECT(
     strip=False,
     upx=False,
     upx_exclude=[],
-    name="SpaceMouseCodexBridge",
+    name="VibeSpaceMouseBridgeForCodex",
 )
-

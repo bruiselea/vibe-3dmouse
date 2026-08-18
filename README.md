@@ -1,8 +1,8 @@
-# SpaceMouse Codex Bridge
+# Vibe SpaceMouse Bridge for Codex
 
 [![Windows 11](https://img.shields.io/badge/Windows-11%20x64-0078D4?logo=windows11)](https://www.microsoft.com/windows/windows-11)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Release](https://img.shields.io/badge/release-0.1.0--beta.1-blue)](https://github.com/bruiselea/vibe-spacemouce/releases/tag/v0.1.0-beta.1)
+[![Release](https://img.shields.io/badge/release-0.1.0--beta.2-blue)](https://github.com/bruiselea/vibe-spacemouce/releases/tag/v0.1.0-beta.2)
 
 手元にある3Dconnexion SpaceMouseを、Codex Micro風の入力デバイスとして使うための
 Windows向けブリッジです。
@@ -16,13 +16,13 @@ SpaceMouseの押す・引く・傾ける・ひねる・左右ボタンを、Code
 承認／却下、Agent切り替えなどへ割り当てられます。
 
 > [!WARNING]
-> `0.1.0-beta.1`はテスト署名ドライバを使う検証版です。SetupはPCのRoot／TrustedPublisherへ
+> `0.1.0-beta.2`はテスト署名ドライバを使う検証版です。SetupはPCのRoot／TrustedPublisherへ
 > テスト証明書を登録します。内容を理解したうえで、信頼できる配布元から入手したSetupだけを
 > 使用してください。一般公開用の正式署名版ではありません。
 
 ## Screenshots
 
-![SpaceMouse Codex Bridge dashboard](docs/images/dashboard.png)
+![Vibe SpaceMouse Bridge for Codex dashboard](docs/images/dashboard.png)
 
 ![SpaceMouse mapping editor](docs/images/mapping.png)
 
@@ -47,8 +47,8 @@ SpaceMouseの押す・引く・傾ける・ひねる・左右ボタンを、Code
 
 ## インストール
 
-1. [Releases](https://github.com/bruiselea/vibe-spacemouce/releases/tag/v0.1.0-beta.1)から
-   `SpaceMouseCodexBridge-0.1.0-beta.1-x64-setup.exe`をダウンロードします。
+1. [Releases](https://github.com/bruiselea/vibe-spacemouce/releases/tag/v0.1.0-beta.2)から
+   `VibeSpaceMouseBridgeForCodex-0.1.0-beta.2-x64-setup.exe`をダウンロードします。
 2. 必要に応じて同梱のSHA-256ファイルと照合します。
 3. Setupを実行し、テスト証明書と仮想HIDドライバの導入に同意します。
 4. Codexを起動するとSpaceMouseへ自動接続します。
@@ -132,17 +132,19 @@ SpaceMouseの物理HIDレポートを読み、Codex Micro互換の仮想HID
 利用したWindowsドライバで提供します。Bridge動作中のみ3DxWareを一時停止し、終了時や
 Codex未検出時には必ず復帰させます。
 
-## 謝辞
+## 謝辞と商標
 
 - [GOROman/vibewatch](https://github.com/GOROman/vibewatch) — 後から公開されたCodex Micro互換HID実装の参考
 - [OpenAI × Work Louder: Codex Micro](https://openai.com/ja-JP/supply/co-lab/work-louder/) — プロジェクトの着想
 - Microsoft Virtual HID miniport sample — 仮想HID実装の基礎
 
-このプロジェクトはOpenAI、3Dconnexion、GOROmanさんの公式製品・公式プロジェクトではありません。
+SpaceMouseおよび3Dconnexionは3Dconnexionの商標または登録商標です。CodexおよびOpenAIは
+OpenAIの商標または登録商標です。本ソフトは独立したコミュニティプロジェクトであり、OpenAI、
+3Dconnexion、GOROmanさんとの提携、承認、後援を示すものではありません。第三者のロゴは同梱していません。
 
 ## License
 
 本プロジェクトの独自コードは [MIT License](LICENSE) で公開します。
 Microsoftサンプル由来コードおよび第三者コンポーネントには、それぞれのライセンスが適用されます。
 詳細は [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt) と
-`native/vhidmini2/LICENSE.microsoft.txt` を参照してください。
+[THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES) を参照してください。

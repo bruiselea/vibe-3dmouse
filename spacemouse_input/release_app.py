@@ -1,4 +1,4 @@
-"""Tray-resident distributable shell for SpaceMouse Codex Bridge."""
+"""Tray-resident distributable shell for Vibe SpaceMouse Bridge for Codex."""
 
 from __future__ import annotations
 
@@ -31,6 +31,7 @@ from .release_controller import (
 from .release_settings import ReleaseSettings
 from .version import PRODUCT_NAME, PRODUCT_VERSION
 from .winipc import NamedEvent, SingleInstance, signal_named_event
+from .wintray import NativeTrayIcon
 
 
 MUTEX_NAME = r"Local\SpaceMouseCodexBridge.ReleaseApp"
@@ -67,7 +68,7 @@ class ReleaseDashboard:
         self.advanced_event = advanced_event
         self.snapshot_queue: queue.Queue[ControllerSnapshot] = queue.Queue(maxsize=64)
         self.last_snapshot: ControllerSnapshot | None = None
-        self.tray_icon = None
+        self.tray_icon: NativeTrayIcon | None = None
         self.advanced_process: subprocess.Popen | None = None
         self.exiting = False
         self.shutdown_thread: threading.Thread | None = None
@@ -164,7 +165,7 @@ class ReleaseDashboard:
         self.settings.save(self.settings_path)
         self.controller.set_enabled(enabled)
         if self.tray_icon is not None:
-            self.tray_icon.update_menu()
+            self.tray_icon.update()
 
     def _enqueue_snapshot(self, snapshot: ControllerSnapshot) -> None:
         try:
@@ -206,36 +207,26 @@ class ReleaseDashboard:
             style = "ReleaseStatus.TLabel"
         self.status_label.configure(style=style)
         if self.tray_icon is not None:
-            self.tray_icon.title = f"{PRODUCT_NAME} — {snapshot.message}"
-            self.tray_icon.update_menu()
+            self.tray_icon.update(f"{PRODUCT_NAME} — {snapshot.message}")
 
     def _start_tray(self) -> None:
         try:
-            import pystray
-            from PIL import Image
-        except ImportError:
-            self.logger.warning("pystray/Pillow not installed; tray icon disabled")
+            self.tray_icon = NativeTrayIcon(
+                resource_path("spacemouse_input", "assets", "vibe-6dof.ico"),
+                PRODUCT_NAME,
+                status_text=self._tray_status_text,
+                is_enabled=lambda: self.controller.enabled,
+                on_show=lambda: self._dispatch(self.show),
+                on_toggle=lambda: self._dispatch(self._toggle_from_tray),
+                on_advanced=lambda: self._dispatch(self.open_advanced),
+                on_logs=lambda: self._dispatch(self.open_logs),
+                on_exit=lambda: self._dispatch(self.request_exit),
+            )
+            self.tray_icon.start()
+        except (OSError, RuntimeError):
+            self.tray_icon = None
+            self.logger.exception("Native Windows tray icon could not be started")
             return
-        source = Image.open(resource_path("spacemouse_input", "assets", "spacemouse-controller.png"))
-        source.thumbnail((60, 46), Image.Resampling.LANCZOS)
-        icon_image = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-        icon_image.alpha_composite(source, ((64 - source.width) // 2, (64 - source.height) // 2))
-        menu = pystray.Menu(
-            pystray.MenuItem(lambda _item: self._tray_status_text(), None, enabled=False),
-            pystray.Menu.SEPARATOR,
-            pystray.MenuItem("ダッシュボードを開く", lambda _icon, _item: self._dispatch(self.show), default=True),
-            pystray.MenuItem(
-                "Codex自動連動",
-                lambda _icon, _item: self._dispatch(self._toggle_from_tray),
-                checked=lambda _item: self.controller.enabled,
-            ),
-            pystray.MenuItem("詳細設定", lambda _icon, _item: self._dispatch(self.open_advanced)),
-            pystray.MenuItem("ログを開く", lambda _icon, _item: self._dispatch(self.open_logs)),
-            pystray.Menu.SEPARATOR,
-            pystray.MenuItem("終了", lambda _icon, _item: self._dispatch(self.request_exit)),
-        )
-        self.tray_icon = pystray.Icon("SpaceMouseCodexBridge", icon_image, PRODUCT_NAME, menu)
-        self.tray_icon.run_detached()
 
     def _tray_status_text(self) -> str:
         return self.last_snapshot.message if self.last_snapshot else "起動しています…"

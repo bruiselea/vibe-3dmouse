@@ -8,7 +8,7 @@
 Windows向けブリッジです。
 
 このプロジェクトは、まず「手元にあるSpaceMouseでCodexを操作できないか？」という
-アイデアから始まり、SpaceMouseの入力判定と操作割り当てを試作しました。その後、
+アイデアから始まり、SpaceMouseの入力判定と操作割り当てを構想しました。その後、
 GOROmanさんが公開してくださったCodex Micro互換ソフトウェア
 [vibewatch](https://github.com/GOROman/vibewatch)を参考に、Codexと接続するHID互換部分を
 実装しています。

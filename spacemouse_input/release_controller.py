@@ -14,6 +14,7 @@ from .official_driver import driver_is_running, resume_driver_if_installed
 from .process_monitor import codex_is_running
 from .protocol import enumerate_codex_devices
 from .runtime import run_bridge
+from .virtual_hid_recovery import request_virtual_hid_recovery
 
 
 STATE_DISABLED = "disabled"
@@ -86,6 +87,7 @@ class BridgeController:
         codex_hid_probe: Callable[[], bool] | None = None,
         driver_probe: Callable[[], bool] = driver_is_running,
         driver_resume: Callable[[], bool] = resume_driver_if_installed,
+        hid_recover: Callable[[], bool] = request_virtual_hid_recovery,
         bridge_runner=run_bridge,
         config_loader=MappingConfig.load,
         logger: logging.Logger | None = None,
@@ -99,6 +101,7 @@ class BridgeController:
         self.codex_hid_probe = codex_hid_probe or (lambda: bool(enumerate_codex_devices()))
         self.driver_probe = driver_probe
         self.driver_resume = driver_resume
+        self.hid_recover = hid_recover
         self.bridge_runner = bridge_runner
         self.config_loader = config_loader
         self.logger = logger or logging.getLogger(__name__)
@@ -151,6 +154,16 @@ class BridgeController:
         if not enabled:
             self._request_bridge_stop("自動連動を停止しています")
         self.logger.info("Codex automatic link: %s", "enabled" if enabled else "disabled")
+        self._wake.set()
+
+    def connect_now(self) -> None:
+        """Enable automatic linking and retry immediately when Codex is available."""
+
+        with self._lock:
+            self._enabled = True
+            self._next_retry = 0.0
+            self.policy.misses = 0
+        self.logger.info("Immediate Bridge connection requested")
         self._wake.set()
 
     def suspend(self) -> None:
@@ -224,10 +237,15 @@ class BridgeController:
                 )
             elif not codex_hid_present:
                 self._next_retry = monotonic() + self.retry_interval
+                recovery_requested = self._safe_probe(self.hid_recover, "virtual HID recovery")
                 self._set_status(
                     STATE_ERROR,
                     "Codex Micro仮想HIDが見つかりません",
-                    "セットアップの修復またはWindows再起動を試してください。",
+                    (
+                        "自動復旧を開始しました。数秒後に再試行します。"
+                        if recovery_requested
+                        else "自動復旧タスクがありません。管理者権限で復旧設定を実行してください。"
+                    ),
                 )
             else:
                 self._start_bridge()

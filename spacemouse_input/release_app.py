@@ -29,6 +29,7 @@ from .release_controller import (
     ControllerSnapshot,
 )
 from .release_settings import ReleaseSettings
+from .startup import set_start_with_windows
 from .version import PRODUCT_NAME, PRODUCT_VERSION
 from .winipc import NamedEvent, SingleInstance, signal_named_event
 from .wintray import NativeTrayIcon
@@ -52,8 +53,8 @@ class ReleaseDashboard:
     ) -> None:
         self.root = root
         self.root.title(PRODUCT_NAME)
-        self.root.geometry("610x555")
-        self.root.minsize(560, 510)
+        self.root.geometry("640x610")
+        self.root.minsize(590, 565)
         self.root.protocol("WM_DELETE_WINDOW", self.hide)
 
         self.config_path = ensure_user_config()
@@ -74,6 +75,7 @@ class ReleaseDashboard:
         self.shutdown_thread: threading.Thread | None = None
 
         self.auto_link_var = tk.BooleanVar(value=self.settings.auto_link_enabled)
+        self.startup_var = tk.BooleanVar(value=self.settings.start_with_windows)
         self.status_var = tk.StringVar(value="起動しています…")
         self.detail_var = tk.StringVar(value="")
         self.codex_var = tk.StringVar(value="確認中")
@@ -82,6 +84,7 @@ class ReleaseDashboard:
         self.driver_var = tk.StringVar(value="確認中")
 
         self._build_ui()
+        self._sync_startup(show_error=False)
         self.controller = BridgeController(
             self.config_path,
             enabled=self.settings.auto_link_enabled,
@@ -146,15 +149,24 @@ class ReleaseDashboard:
             info,
             text=(
                 "Codexを開くとSpaceMouseを自動接続し、Codexを閉じると3DxWareへ戻します。\n"
+                "画面を閉じても通知領域で常駐し、アイコンのダブルクリックで再表示できます。\n"
                 "割り当てや感度は「詳細設定」から変更できます。"
             ),
             justify="left",
         ).pack(anchor="w")
+        ttk.Checkbutton(
+            info,
+            text="Windowsログイン時に通知領域へ常駐",
+            variable=self.startup_var,
+            command=self._toggle_startup,
+        ).pack(anchor="w", pady=(8, 0))
 
         buttons = ttk.Frame(outer)
         buttons.pack(fill="x", side="bottom", pady=(16, 0))
+        self.connect_button = ttk.Button(buttons, text="今すぐ接続", command=self.connect_now)
+        self.connect_button.pack(side="left")
         self.advanced_button = ttk.Button(buttons, text="詳細設定", command=self.open_advanced)
-        self.advanced_button.pack(side="left")
+        self.advanced_button.pack(side="left", padx=(7, 0))
         ttk.Button(buttons, text="ログを開く", command=self.open_logs).pack(side="left", padx=7)
         ttk.Button(buttons, text="トレイへ隠す", command=self.hide).pack(side="left")
         ttk.Button(buttons, text="終了", command=self.request_exit).pack(side="right")
@@ -164,6 +176,34 @@ class ReleaseDashboard:
         self.settings.auto_link_enabled = enabled
         self.settings.save(self.settings_path)
         self.controller.set_enabled(enabled)
+        if self.tray_icon is not None:
+            self.tray_icon.update()
+
+    def _toggle_startup(self) -> None:
+        self.settings.start_with_windows = self.startup_var.get()
+        self.settings.save(self.settings_path)
+        self._sync_startup(show_error=True)
+
+    def _sync_startup(self, *, show_error: bool) -> None:
+        try:
+            set_start_with_windows(self.settings.start_with_windows)
+        except OSError as error:
+            self.logger.exception("Could not update Windows login startup")
+            self.startup_var.set(False)
+            if show_error:
+                messagebox.showerror(
+                    "自動起動を設定できませんでした",
+                    f"Windowsのログイン時起動を更新できませんでした。\n{error}",
+                    parent=self.root,
+                )
+
+    def connect_now(self) -> None:
+        self.auto_link_var.set(True)
+        self.settings.auto_link_enabled = True
+        self.settings.save(self.settings_path)
+        self.controller.connect_now()
+        self.status_var.set("接続を再試行しています…")
+        self.detail_var.set("Codex、SpaceMouse、仮想HIDを確認しています。")
         if self.tray_icon is not None:
             self.tray_icon.update()
 
@@ -206,6 +246,14 @@ class ReleaseDashboard:
         else:
             style = "ReleaseStatus.TLabel"
         self.status_label.configure(style=style)
+        self.connect_button.configure(
+            text="接続中" if snapshot.state == STATE_ACTIVE else "今すぐ接続 / 再試行",
+            state=(
+                "disabled"
+                if snapshot.state in (STATE_ACTIVE, STATE_STARTING, STATE_STOPPING)
+                else "normal"
+            ),
+        )
         if self.tray_icon is not None:
             self.tray_icon.update(f"{PRODUCT_NAME} — {snapshot.message}")
 
@@ -217,6 +265,7 @@ class ReleaseDashboard:
                 status_text=self._tray_status_text,
                 is_enabled=lambda: self.controller.enabled,
                 on_show=lambda: self._dispatch(self.show),
+                on_connect=lambda: self._dispatch(self.connect_now),
                 on_toggle=lambda: self._dispatch(self._toggle_from_tray),
                 on_advanced=lambda: self._dispatch(self.open_advanced),
                 on_logs=lambda: self._dispatch(self.open_logs),

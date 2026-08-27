@@ -38,6 +38,7 @@ Source: "..\native\vhidmini2\driver\umdf2\x64\Release\CodexMicroHid.cer"; DestDi
 Source: "..\native\swdevice_creator\x64\Release\swdevice_creator.exe"; DestDir: "{app}\driver"; Flags: ignoreversion
 Source: "install_driver.ps1"; DestDir: "{app}\driver"; Flags: ignoreversion
 Source: "uninstall_driver.ps1"; DestDir: "{app}\driver"; Flags: ignoreversion
+Source: "..\scripts\ensure_virtual_hid.ps1"; DestDir: "{app}\driver"; Flags: ignoreversion
 Source: "..\BETA_README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\THIRD_PARTY_NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\THIRD_PARTY_LICENSES\*"; DestDir: "{app}\THIRD_PARTY_LICENSES"; Flags: ignoreversion recursesubdirs createallsubdirs

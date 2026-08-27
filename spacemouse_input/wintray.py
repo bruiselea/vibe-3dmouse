@@ -184,6 +184,7 @@ class NativeTrayIcon:
         status_text: Callable[[], str],
         is_enabled: Callable[[], bool],
         on_show: Callable[[], None],
+        on_connect: Callable[[], None],
         on_toggle: Callable[[], None],
         on_advanced: Callable[[], None],
         on_logs: Callable[[], None],
@@ -195,10 +196,11 @@ class NativeTrayIcon:
         self.is_enabled = is_enabled
         self.callbacks = {
             1001: on_show,
-            1002: on_toggle,
-            1003: on_advanced,
-            1004: on_logs,
-            1005: on_exit,
+            1002: on_connect,
+            1003: on_toggle,
+            1004: on_advanced,
+            1005: on_logs,
+            1006: on_exit,
         }
         self._thread: threading.Thread | None = None
         self._ready = threading.Event()
@@ -303,12 +305,13 @@ class NativeTrayIcon:
             user32.AppendMenuW(menu, MF_STRING | MF_GRAYED, 0, self.status_text()[:80])
             user32.AppendMenuW(menu, MF_SEPARATOR, 0, None)
             user32.AppendMenuW(menu, MF_STRING, 1001, "ダッシュボードを開く")
+            user32.AppendMenuW(menu, MF_STRING, 1002, "今すぐ接続 / 再試行")
             toggle_flags = MF_STRING | (MF_CHECKED if self.is_enabled() else 0)
-            user32.AppendMenuW(menu, toggle_flags, 1002, "Codex自動連動")
-            user32.AppendMenuW(menu, MF_STRING, 1003, "詳細設定")
-            user32.AppendMenuW(menu, MF_STRING, 1004, "ログを開く")
+            user32.AppendMenuW(menu, toggle_flags, 1003, "Codex自動連動")
+            user32.AppendMenuW(menu, MF_STRING, 1004, "詳細設定")
+            user32.AppendMenuW(menu, MF_STRING, 1005, "ログを開く")
             user32.AppendMenuW(menu, MF_SEPARATOR, 0, None)
-            user32.AppendMenuW(menu, MF_STRING, 1005, "終了")
+            user32.AppendMenuW(menu, MF_STRING, 1006, "終了")
             point = POINT()
             user32.GetCursorPos(ctypes.byref(point))
             user32.SetForegroundWindow(self._hwnd)

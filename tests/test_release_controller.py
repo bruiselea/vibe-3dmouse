@@ -78,6 +78,7 @@ class ReleaseControllerTests(unittest.TestCase):
             codex_hid_probe=lambda: True,
             driver_probe=lambda: True,
             driver_resume=lambda: False,
+            hid_recover=lambda: False,
             config_loader=lambda _path: object(),
         )
         defaults.update(overrides)
@@ -89,6 +90,14 @@ class ReleaseControllerTests(unittest.TestCase):
         controller.tick()
         self.assertEqual(controller.snapshot().state, STATE_ERROR)
         runner.assert_not_called()
+
+    def test_missing_hid_requests_privileged_recovery(self):
+        recover = Mock(return_value=True)
+        controller = self.make_controller(codex_hid_probe=lambda: False, hid_recover=recover)
+        controller.tick()
+        self.assertEqual(controller.snapshot().state, STATE_ERROR)
+        self.assertIn("自動復旧", controller.snapshot().detail)
+        recover.assert_called_once_with()
 
     def test_active_bridge_stops_after_codex_debounce(self):
         codex = MutableProbe(True)
@@ -135,7 +144,21 @@ class ReleaseControllerTests(unittest.TestCase):
         controller.wait_for_bridge_stop(1.0)
         controller.shutdown()
 
+    def test_connect_now_enables_and_retries_immediately(self):
+        started = threading.Event()
+
+        def runner(_config, *, stop_event, on_status, **_kwargs):
+            on_status("running")
+            started.set()
+            stop_event.wait(1.0)
+
+        controller = self.make_controller(enabled=False, bridge_runner=runner)
+        controller.connect_now()
+        controller.tick()
+        self.assertTrue(controller.enabled)
+        self.assertTrue(started.wait(1.0))
+        controller.shutdown()
+
 
 if __name__ == "__main__":
     unittest.main()
-

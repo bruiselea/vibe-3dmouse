@@ -15,6 +15,10 @@ $controlFile = Join-Path $logDirectory 'control.bin'
 New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
 Start-Transcript -LiteralPath $logPath -Force | Out-Null
 try {
+    Unregister-ScheduledTask -TaskName 'VibeSpaceMouseBridge-EnsureVirtualHid' `
+        -Confirm:$false -ErrorAction SilentlyContinue
+    Unregister-ScheduledTask -TaskName 'VibeSpaceMouseBridge-EnsureVirtualHid-System' `
+        -Confirm:$false -ErrorAction SilentlyContinue
     if (Test-Path -LiteralPath $app -PathType Leaf) {
         & $app --shutdown
         $deadline = [DateTime]::UtcNow.AddSeconds(25)

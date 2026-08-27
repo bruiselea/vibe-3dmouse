@@ -8,6 +8,7 @@ $driverDirectory = [IO.Path]::GetFullPath($DriverDirectory)
 $inf = Join-Path $driverDirectory 'VhidminiUm.inf'
 $certificate = Join-Path $driverDirectory 'CodexMicroHid.cer'
 $creator = Join-Path $driverDirectory 'swdevice_creator.exe'
+$ensureScript = Join-Path $driverDirectory 'ensure_virtual_hid.ps1'
 $metadataPath = Join-Path $driverDirectory 'installed-driver.json'
 $controlDirectory = Join-Path $env:ProgramData 'SpaceMouseCodex'
 $controlFile = Join-Path $controlDirectory 'control.bin'
@@ -18,7 +19,7 @@ $logPath = Join-Path $logDirectory 'install.log'
 New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
 Start-Transcript -LiteralPath $logPath -Force | Out-Null
 try {
-    foreach ($path in @($inf, $certificate, $creator)) {
+    foreach ($path in @($inf, $certificate, $creator, $ensureScript)) {
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
             throw "Required driver file was not found: $path"
         }
@@ -98,6 +99,35 @@ try {
     } | ConvertTo-Json | Set-Content -LiteralPath $metadataPath -Encoding utf8
 
     Write-Host "Driver installed: $publishedName"
+    $taskName = 'VibeSpaceMouseBridge-EnsureVirtualHid'
+    $systemTaskName = "$taskName-System"
+    $powerShell = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    $taskArguments = '-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "{0}" -CreatorPath "{1}"' -f `
+        $ensureScript, $creator
+    $taskAction = New-ScheduledTaskAction -Execute $powerShell -Argument $taskArguments
+    $startupTrigger = New-ScheduledTaskTrigger -AtStartup
+    $startupTrigger.Delay = 'PT20S'
+    $installIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $installIdentity.Name
+    $systemPrincipal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -LogonType ServiceAccount -RunLevel Highest
+    $userPrincipal = New-ScheduledTaskPrincipal -UserId $installIdentity.Name -LogonType Interactive -RunLevel Highest
+    $taskSettings = New-ScheduledTaskSettingsSet -StartWhenAvailable `
+        -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+        -ExecutionTimeLimit (New-TimeSpan -Minutes 2) -MultipleInstances IgnoreNew
+    Register-ScheduledTask -TaskName $systemTaskName -Action $taskAction `
+        -Trigger $startupTrigger -Principal $systemPrincipal `
+        -Settings $taskSettings -Force | Out-Null
+    Register-ScheduledTask -TaskName $taskName -Action $taskAction `
+        -Trigger $logonTrigger -Principal $userPrincipal `
+        -Settings $taskSettings -Force | Out-Null
+    $scheduler = New-Object -ComObject 'Schedule.Service'
+    $scheduler.Connect()
+    $registeredTask = $scheduler.GetFolder('\').GetTask($taskName)
+    $installUserSid = $installIdentity.User.Value
+    $registeredTask.SetSecurityDescriptor(
+        "D:P(A;;FA;;;SY)(A;;FA;;;BA)(A;;GRGX;;;$installUserSid)",
+        0
+    )
     if ($driverExit -eq 3010) { Write-Warning 'Windows must be restarted to finish driver installation.' }
 } finally {
     try { Stop-Transcript | Out-Null } catch {}

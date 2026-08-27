@@ -26,18 +26,23 @@ CreatedCallback(
     SetEvent(state->Event);
 }
 
-int wmain()
+int wmain(int argc, wchar_t** argv)
 {
     static const WCHAR hardwareIds[] = L"root\\CodexMicroHid\0\0";
     FILETIME now{};
     WCHAR softwareInstanceId[96]{};
-    GetSystemTimeAsFileTime(&now);
-    swprintf_s(
-        softwareInstanceId,
-        L"SPACEMOUSE_CODEX_%08lX%08lX_%08lX",
-        now.dwHighDateTime,
-        now.dwLowDateTime,
-        GetCurrentProcessId());
+    const bool stableInstance = argc == 2 && _wcsicmp(argv[1], L"--stable") == 0;
+    if (stableInstance) {
+        wcscpy_s(softwareInstanceId, L"SPACEMOUSE_CODEX_RUNTIME");
+    } else {
+        GetSystemTimeAsFileTime(&now);
+        swprintf_s(
+            softwareInstanceId,
+            L"SPACEMOUSE_CODEX_%08lX%08lX_%08lX",
+            now.dwHighDateTime,
+            now.dwLowDateTime,
+            GetCurrentProcessId());
+    }
     SW_DEVICE_CREATE_INFO info{};
     info.cbSize = sizeof(info);
     // A removed SWD ID can remain tombstoned until reboot. A unique instance
